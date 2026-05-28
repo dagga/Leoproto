@@ -4,6 +4,10 @@ plugins {
     java
 }
 
+repositories {
+    mavenCentral()
+}
+
 group = "org.graymatter.proto.leo"
 version = "0.0.1-SNAPSHOT"
 
