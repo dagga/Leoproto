@@ -1,0 +1,36 @@
+@startuml
+!pragma layout smetana
+package "org.graymatter.proto.leo.backend" {
+    class UrlEntity {
+        - Long id
+        - String url
+        + Long getId()
+        + void setId(Long id)
+        + String getUrl()
+        + void setUrl(String url)
+    }
+
+    interface UrlRepository {
+    }
+
+    class UrlController {
+        - UrlRepository repository
+        + List<UrlEntity> getAllUrls()
+        + UrlEntity createUrl(UrlEntity url)
+    }
+
+    UrlController --> UrlRepository : uses
+    UrlRepository ..> UrlEntity : manages
+}
+
+package "frontend" {
+    class Page {
+        - url: string
+        - urls: UrlItem[]
+        + fetchUrls()
+        + handleSubmit()
+    }
+}
+
+Page ..> UrlController : REST API Calls
+@enduml

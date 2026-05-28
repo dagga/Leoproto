@@ -1,0 +1,35 @@
+@startuml
+!pragma layout smetana
+actor User
+participant "Frontend (Next.js)" as FE
+participant "UrlController" as UC
+participant "UrlRepository" as UR
+database "H2 Database" as DB
+
+== Affichage Initial / Rafraîchissement ==
+User -> FE : Accède à la page
+FE -> UC : GET /api/urls
+UC -> UR : findAll()
+UR -> DB : SELECT * FROM url_entity
+DB --> UR : Liste d'URLs
+UR --> UC : Liste d'entities
+UC --> FE : JSON Array [urls]
+FE --> User : Affiche la liste
+
+== Ajout d'une URL ==
+User -> FE : Saisit une URL & clique "Ajouter"
+FE -> FE : Valide le format URL
+alt URL Valide
+    FE -> UC : POST /api/urls {url: "..."}
+    UC -> UC : @Valid validation
+    UC -> UR : save(entity)
+    UR -> DB : INSERT INTO url_entity ...
+    DB --> UR : Confirmation / Generated ID
+    UR --> UC : Entity sauvegardée
+    UC --> FE : JSON {id, url}
+    FE -> FE : fetchUrls() (Rafraîchit la liste)
+    FE --> User : Message de succès
+else URL Invalide
+    FE --> User : Affiche message d'erreur
+end
+@enduml
